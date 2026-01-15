@@ -1,0 +1,5 @@
+package rubiya.oauth2;
+
+public class WebConfig {
+
+}

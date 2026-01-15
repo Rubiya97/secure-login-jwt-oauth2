@@ -1,0 +1,82 @@
+package rubiya.oauth2.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import rubiya.oauth2.CustomOAuth2UserService;
+import rubiya.oauth2.OAuth2SuccessHandler;
+import rubiya.oauth2.jwt.JwtFilter;
+import rubiya.oauth2.service.UserServiceImpl;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+
+@EnableWebSecurity
+@Configuration
+
+public class SecurityConfig {
+
+	@Autowired
+    private  CustomOAuth2UserService customOAuth2UserService;
+	@Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
+	@Autowired
+    private  UserServiceImpl userDetailsService;
+	@Autowired
+    private  JwtFilter jwtFilter;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // For username/password login
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            // OAuth2 login configuration
+            .oauth2Login(oauth -> oauth
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+                .successHandler(oAuth2SuccessHandler)
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/")
+            );
+
+        // Add JWT filter BEFORE UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+}
+

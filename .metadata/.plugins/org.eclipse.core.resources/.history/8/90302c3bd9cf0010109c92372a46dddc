@@ -1,0 +1,98 @@
+package rubiya.oauth2.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import rubiya.oauth2.DTO.RegisterRequest;
+import rubiya.oauth2.entity.User;
+import rubiya.oauth2.entity.User.AuthProvider;
+import rubiya.oauth2.repository.UserRepository;
+
+@Service
+
+public class UserServiceImpl implements UserService,UserDetailsService {
+
+	@Autowired
+    private  UserRepository userRepository;
+	@Autowired
+    private  PasswordEncoder passwordEncoder;
+
+    
+    public User registerUser(RegisterRequest request) {
+    	
+    	
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email already exists!");
+        }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setProvider(AuthProvider.LOCAL);
+        user.getRoles().add("USER");  
+
+        return userRepository.save(user);
+
+
+        
+    }
+
+
+    public User loginUser(String email, String rawPassword) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return user;
+    }
+
+    @Override
+    public User processOAuthPostLogin(String email, String name, String providerId) {
+
+        Optional<User> existing = userRepository.findByEmail(email);
+
+        if (existing.isPresent()) {
+            return existing.get();
+        }
+
+        User user = new User();
+        user.setEmail(email);
+        user.setName(name);
+        user.setProvider(AuthProvider.GOOGLE);
+        user.setProviderId(providerId);
+
+        return userRepository.save(user);
+    }
+
+    
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+    
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())  // Spring stores email as username
+                .password(user.getPassword())
+                .roles(user.getRoles().toArray(new String[0]))
+                .build();
+    }
+
+}

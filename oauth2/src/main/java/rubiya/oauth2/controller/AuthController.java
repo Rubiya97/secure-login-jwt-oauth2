@@ -1,0 +1,113 @@
+package rubiya.oauth2.controller;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import rubiya.oauth2.DTO.LoginRequest;
+import rubiya.oauth2.DTO.LoginResponse;
+import rubiya.oauth2.DTO.RegisterRequest;
+import rubiya.oauth2.DTO.RegisterResponse;
+import rubiya.oauth2.jwt.JwtUtil;
+import rubiya.oauth2.entity.RefreshToken;
+import rubiya.oauth2.entity.User;
+import rubiya.oauth2.service.UserService;
+
+@RestController
+@RequestMapping("/auth")
+
+public class AuthController {
+
+	@Autowired
+	@Lazy
+    private  UserService userService;
+	
+    @Autowired
+    private  JwtUtil jwtUtil;
+
+    // ---------------- Registration ----------------
+    @PostMapping("/register")
+    public RegisterResponse register(@RequestBody RegisterRequest request) {
+        User user = userService.registerUser(request);
+
+        return new RegisterResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                "Registration successful!"
+        );
+    }
+
+   
+    
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request,
+                                   HttpServletResponse response) {
+        try {
+            User user = userService.loginUser(request.getEmail(), request.getPassword());
+
+            String accessToken = jwtUtil.generateAccessToken(user.getEmail());
+            ResponseCookie accessCookie = jwtUtil.createAccessTokenCookie(accessToken);
+
+           
+
+            response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+         
+
+            LoginResponse loginResponse = new LoginResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    "Login successful!",
+                    accessToken
+                    
+            );
+            return ResponseEntity.ok(loginResponse);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(Map.of("message", e.getMessage()));
+        }
+    }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        // Delete the access token cookie
+        ResponseCookie deleteAccess = ResponseCookie.from("access_token", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteAccess.toString());
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    
+    
+    @GetMapping("/check")
+    public ResponseEntity<?> checkAuth(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok(Map.of("authenticated", true));
+        }
+        return ResponseEntity.status(401).body(Map.of("authenticated", false));
+    }
+
+
+   
+    
+ 
+
+
+}
+

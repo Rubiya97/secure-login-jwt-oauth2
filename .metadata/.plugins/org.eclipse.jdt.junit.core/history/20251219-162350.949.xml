@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="AuthControllerTest" project="oauth2" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="rubiya.oauth2.controller.AuthControllerTest" time="1.239" displayname="AuthControllerTest" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.AuthControllerTest]">
+    <testcase name="testRegister_success" classname="rubiya.oauth2.controller.AuthControllerTest" time="1.239" displayname="testRegister_success()" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.AuthControllerTest]/[method:testRegister_success()]"/>
+  </testsuite>
+</testrun>

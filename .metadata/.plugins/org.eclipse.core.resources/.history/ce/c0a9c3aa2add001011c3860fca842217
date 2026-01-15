@@ -1,0 +1,111 @@
+package rubiya.oauth2.controller;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import rubiya.oauth2.DTO.RegisterRequest;
+import rubiya.oauth2.entity.User;
+import rubiya.oauth2.entity.User.AuthProvider;
+import rubiya.oauth2.repository.UserRepository;
+import rubiya.oauth2.service.UserServiceImpl;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Optional;
+
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
+public class UserServiceImplTest {
+
+	@InjectMocks
+	private UserServiceImpl userService;
+	
+	@Mock
+	private UserRepository userRepository;
+	
+	@Mock
+	private PasswordEncoder passwordEncoder;
+	
+	@Mock
+	private AuthenticationManager authenticationManager;
+	
+	@Test
+	public void registerUser_success() {
+		RegisterRequest request = new RegisterRequest();
+		request.setName("Rubiya");
+		request.setEmail("rubiya@example.com");
+		request.setPassword("pass123");
+		
+		Mockito.when(userRepository.existsByEmail(request.getEmail()))
+		.thenReturn(false);
+		
+		Mockito.when(passwordEncoder.encode("pass123"))
+		.thenReturn("encodedPass");
+		
+		User savedUser = new User();
+		savedUser.setId(1L);
+		savedUser.setEmail(request.getEmail());
+		savedUser.setName(request.getName());
+		
+		Mockito.when(userRepository.save(Mockito.any(User.class)))
+		.thenReturn(savedUser);
+		
+		User result = userService.registerUser(request);
+		
+		assertEquals("rubiya@example.com",result.getEmail());
+		assertEquals("Rubiya",result.getName());
+	}
+	
+	
+	@Test
+	public void registerUser_emailAlreadyExist() {
+		RegisterRequest request = new RegisterRequest();
+		request.setEmail("rubiya@example.com");
+		
+		Mockito.when(userRepository.existsByEmail(request.getEmail())
+				.thenReturn(true);
+		
+		RuntimeException exception = assertThrows(
+				RuntimeException.class,
+				() -> userService.registerUser(request)
+				);
+		
+		assertEquals("Email already exists!", exception.getMessage());
+		
+	}
+	
+	@Test
+	public void loginUser_success() {
+		String email ="rubiya@example.com";
+		String password = "pass123";
+		
+		User user = new User();
+		user.setEmail(email);
+		user.setProvider(AuthProvider.LOCAL);
+		
+		
+		Mockito.when(userRepository.findByEmail(email))
+		.thenReturn(Optional.of(user));
+		
+		Mockito.when(authenticationManager.authenticate(Mockito.any()))
+		.thenReturn(null);
+		
+		User result = userService.loginUser(email, password);
+		
+		assertEquals(email,result.getEmail());
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+}

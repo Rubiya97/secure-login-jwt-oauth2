@@ -1,0 +1,41 @@
+package rubiya.oauth2.DTO;
+
+
+public class RegisterResponse {
+    private Long id;
+    private String name;
+    private String email;
+    private String message;
+    
+	public RegisterResponse(Long id2, String name2, String email2, String message2) {
+		this.id = id2;
+		this.name=name2;
+		this.email=email2;
+		this.message=message2;
+	
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+}
