@@ -46,7 +46,6 @@ INDEX VERSION 1.134+C:\Users\RubiyaS\Desktop\OAuth2Login\OAuth2\.metadata\.plugi
 456840130.index
 2191978920.index
 562798279.index
-1308860354.index
 124350967.index
 1496351639.index
 2259409509.index
