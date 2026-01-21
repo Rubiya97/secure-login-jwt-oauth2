@@ -36,23 +36,9 @@ pipeline {
         stage('Test Backend') {
             steps {
                 dir('oauth2') {
-                    echo "Running backend tests..."
-                    withCredentials([
-                        string(credentialsId: 'DB_URL', variable: 'DB_URL'),
-                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
-                        string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
-                        string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET')
-                    ]) {
-                        bat """
-                            mvn test ^
-                                -DDB_URL=%DB_URL% ^
-                                -DDB_USERNAME=%DB_USERNAME% ^
-                                -DDB_PASSWORD=%DB_PASSWORD% ^
-                                -DGOOGLE_CLIENT_ID=%GOOGLE_CLIENT_ID% ^
-                                -DGOOGLE_CLIENT_SECRET=%GOOGLE_CLIENT_SECRET%
-                        """
-                    }
+                    echo "Running backend tests using H2..."
+                    // Use test profile with H2 in-memory DB
+                    bat 'mvn test -Dspring.profiles.active=test'
                 }
             }
         }
