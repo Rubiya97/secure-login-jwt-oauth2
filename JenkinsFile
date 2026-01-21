@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = tool name: 'maven auto', type: 'maven'
+        MAVEN_HOME = tool name: 'Maven Auto', type: 'maven'
         PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
