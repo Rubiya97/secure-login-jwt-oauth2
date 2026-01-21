@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="UserServiceImplTest" project="oauth2" tests="3" started="3" failures="0" errors="0" ignored="0">
-  <testsuite name="rubiya.oauth2.controller.UserServiceImplTest" time="0.845" displayname="UserServiceImplTest" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.UserServiceImplTest]">
-    <testcase name="registerUser_emailAlreadyExist" classname="rubiya.oauth2.controller.UserServiceImplTest" time="0.827" displayname="registerUser_emailAlreadyExist()" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.UserServiceImplTest]/[method:registerUser_emailAlreadyExist()]"/>
-    <testcase name="registerUser_success" classname="rubiya.oauth2.controller.UserServiceImplTest" time="0.012" displayname="registerUser_success()" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.UserServiceImplTest]/[method:registerUser_success()]"/>
-    <testcase name="loginUser_success" classname="rubiya.oauth2.controller.UserServiceImplTest" time="0.005" displayname="loginUser_success()" uniqueid="[engine:junit-jupiter]/[class:rubiya.oauth2.controller.UserServiceImplTest]/[method:loginUser_success()]"/>
-  </testsuite>
-</testrun>
