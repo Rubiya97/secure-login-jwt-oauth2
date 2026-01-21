@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = 'Maven 3.9.2' // Replace with your Jenkins Maven installation name
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/Rubiya97/secure-login-jwt-oauth2.git',
+                    credentialsId: 'GitHub PAT'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('oauth2') {
+                    sh "${MAVEN_HOME}/bin/mvn clean package"
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend-oauth') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        stage('Test Backend') {
+            steps {
+                dir('oauth2') {
+                    sh "${MAVEN_HOME}/bin/mvn test"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deployment step goes here (optional)"
+            }
+        }
+    }
+}
