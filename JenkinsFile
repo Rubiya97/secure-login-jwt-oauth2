@@ -12,7 +12,16 @@ pipeline {
             steps {
                 dir('oauth2') {
                     echo "Building backend..."
-                    bat 'mvn clean package'
+                    // Inject credentials here
+                    withCredentials([
+                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
+                        string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET')
+                    ]) {
+                        // Run Maven package with environment variables
+                        bat 'mvn clean package -Dspring.datasource.username=%DB_USERNAME% -Dspring.datasource.password=%DB_PASSWORD% -Dspring.security.oauth2.client.registration.google.client-id=%GOOGLE_CLIENT_ID% -Dspring.security.oauth2.client.registration.google.client-secret=%GOOGLE_CLIENT_SECRET%'
+                    }
                 }
             }
         }
@@ -21,7 +30,14 @@ pipeline {
             steps {
                 dir('oauth2') {
                     echo "Running backend tests..."
-                    bat 'mvn test'
+                    withCredentials([
+                        string(credentialsId: 'DB_USERNAME', variable: 'DB_USERNAME'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
+                        string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET')
+                    ]) {
+                        bat 'mvn test -Dspring.datasource.username=%DB_USERNAME% -Dspring.datasource.password=%DB_PASSWORD% -Dspring.security.oauth2.client.registration.google.client-id=%GOOGLE_CLIENT_ID% -Dspring.security.oauth2.client.registration.google.client-secret=%GOOGLE_CLIENT_SECRET%'
+                    }
                 }
             }
         }
