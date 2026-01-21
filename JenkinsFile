@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = tool name: 'Maven 3.9.2', type: 'maven'  // Use your Jenkins Maven tool
+        MAVEN_HOME = tool name: 'Maven 3.9.12', type: 'maven'  // Use your Jenkins Maven tool
         NODE_HOME = tool name: 'NodeJS 20', type: 'nodejs'    // Optional, if using Node.js plugin
         PATH = "${MAVEN_HOME}/bin:${NODE_HOME}/bin:${env.PATH}"
     }
