@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         MAVEN_HOME = tool name: 'Maven Auto', type: 'maven'
-        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+        PATH = "${MAVEN_HOME}/bin;${env.PATH}"
     }
 
     stages {
@@ -11,7 +11,7 @@ pipeline {
             steps {
                 dir('oauth2') {
                     echo "Building backend..."
-                    sh 'mvn clean package'
+                    bat 'mvn clean package'
                 }
             }
         }
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 dir('oauth2') {
                     echo "Running backend tests..."
-                    sh 'mvn test'
+                    bat 'mvn test'
                 }
             }
         }
@@ -29,8 +29,8 @@ pipeline {
             steps {
                 dir('frontend-oauth') {
                     echo "Building frontend..."
-                    sh 'npm install'
-                    sh 'npm run build'
+                    bat 'npm install'
+                    bat 'npm run build'
                 }
             }
         }
@@ -51,4 +51,3 @@ pipeline {
         }
     }
 }
-
