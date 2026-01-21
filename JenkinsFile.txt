@@ -2,30 +2,17 @@ pipeline {
     agent any
 
     environment {
-        MAVEN_HOME = 'Maven 3.9.2' // Replace with your Jenkins Maven installation name
+        MAVEN_HOME = tool name: 'Maven 3.9.2', type: 'maven'  // Use your Jenkins Maven tool
+        NODE_HOME = tool name: 'NodeJS 20', type: 'nodejs'    // Optional, if using Node.js plugin
+        PATH = "${MAVEN_HOME}/bin:${NODE_HOME}/bin:${env.PATH}"
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/Rubiya97/secure-login-jwt-oauth2.git',
-                    credentialsId: 'GitHub PAT'
-            }
-        }
-
         stage('Build Backend') {
             steps {
                 dir('oauth2') {
-                    sh "${MAVEN_HOME}/bin/mvn clean package"
-                }
-            }
-        }
-
-        stage('Build Frontend') {
-            steps {
-                dir('frontend-oauth') {
-                    sh 'npm install'
-                    sh 'npm run build'
+                    echo "Building backend..."
+                    sh 'mvn clean package'
                 }
             }
         }
@@ -33,7 +20,18 @@ pipeline {
         stage('Test Backend') {
             steps {
                 dir('oauth2') {
-                    sh "${MAVEN_HOME}/bin/mvn test"
+                    echo "Running backend tests..."
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend-oauth') {
+                    echo "Building frontend..."
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
@@ -44,4 +42,14 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            echo "Pipeline completed successfully!"
+        }
+        failure {
+            echo "Pipeline failed. Check logs for details."
+        }
+    }
 }
+
