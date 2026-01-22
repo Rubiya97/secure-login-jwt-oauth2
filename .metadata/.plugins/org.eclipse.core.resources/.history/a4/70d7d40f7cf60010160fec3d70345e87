@@ -1,5 +1,0 @@
-package rubiya.oauth2.config;
-
-public class TestSecurityConfig {
-
-}
