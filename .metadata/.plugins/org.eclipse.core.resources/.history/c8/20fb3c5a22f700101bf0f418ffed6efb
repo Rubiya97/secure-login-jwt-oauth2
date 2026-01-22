@@ -1,0 +1,14 @@
+package rubiya.oauth2.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+
+	
+	@GetMapping
+	public static void getMessage() {
+		System.out.println("Hello");
+	}
+}
