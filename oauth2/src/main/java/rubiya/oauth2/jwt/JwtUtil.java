@@ -25,12 +25,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private final String SECRET = "secret-key-should-be-at-least-256-bits-long";
-   @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
-
-    public JwtUtil(RefreshTokenRepository refreshTokenRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-    }
+  
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
