@@ -24,7 +24,7 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    private final String SECRET = "your-very-strong-secret-key-should-be-at-least-256-bits-long";
+    private final String SECRET = "secret-key-should-be-at-least-256-bits-long";
    @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
@@ -85,17 +85,7 @@ public class JwtUtil {
     	    throw new RuntimeException("Invalid access token");
     	}
 
-        /*try {
-            Claims claims = extractAllClaims(token);
-
-            if (claims.getExpiration().before(new Date())) {
-                throw new RuntimeException("Access token expired");
-            }
-
-            return claims.getSubject(); // email
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid access token");
-        }*/
+        
     }
     
     
@@ -120,51 +110,5 @@ public class JwtUtil {
                 .build();
     }
 
-    // ---------- Refresh Token Methods ----------
-    
-    
-    
-    /*
-    public RefreshToken createRefreshToken(User user) {
-        String token = UUID.randomUUID().toString(); // generate token
-
-        RefreshToken refreshToken = refreshTokenRepository.findByUserId(user.getId())
-                .orElse(new RefreshToken());
-        refreshToken.setUser(user);
-        refreshToken.setToken(token);
-        refreshToken.setExpiryDate(LocalDateTime.now().plusMinutes(1).plusSeconds(30)); //set expiry
-
-        refreshTokenRepository.save(refreshToken);
-
-        return refreshToken;
-    }
-
-   
-
-    public ResponseCookie createRefreshTokenCookie(String token) {
-        return ResponseCookie.from("refresh_token", token)
-                .httpOnly(true)
-                .secure(true)
-                .path("/auth")
-                .maxAge(7 * 24 * 60 * 60) // 7 days
-                .sameSite("Lax")
-                .build();
-    }
-
-    public String validateRefreshToken(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
-
-        if (refreshToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.delete(refreshToken);
-            throw new RuntimeException("Refresh token expired");
-        }
-
-        return refreshToken.getUser().getEmail();
-    }
-
-    public void deleteRefreshToken(User user) {
-        refreshTokenRepository.deleteByUser(user);
-    }*/
 }
 
