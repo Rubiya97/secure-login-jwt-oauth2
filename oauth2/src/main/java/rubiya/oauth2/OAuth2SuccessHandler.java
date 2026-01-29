@@ -65,44 +65,4 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
 
-   /* @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
-
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-        String providerId = oAuth2User.getName();
-
-        // Process user in DB (create if new)
-        User user = userService.processOAuthPostLogin(email, name, providerId);
-
-        // Generate JWT access token
-        String accessToken = jwtUtil.generateAccessToken(email);
-        ResponseCookie accessCookie = jwtUtil.createAccessTokenCookie(accessToken);
-
-        // Generate refresh token
-        RefreshToken refreshToken = jwtUtil.createRefreshToken(user);
-        ResponseCookie refreshCookie = jwtUtil.createRefreshTokenCookie(refreshToken.getToken());
-
-        // Add cookies to response
-        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
-        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        // Optional: return JSON instead of redirect
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        String jsonResponse = String.format(
-                "{\"id\": %d, \"name\": \"%s\", \"email\": \"%s\", \"message\": \"Login successful!\", \"accessToken\": \"%s\", \"refreshToken\": \"%s\"}",
-                user.getId(), user.getName(), user.getEmail(), accessToken, refreshToken.getToken()
-        );
-
-        response.getWriter().write(jsonResponse);
-        response.getWriter().flush();
-
-        // Prevent default redirect
-        clearAuthenticationAttributes(request);
-    }*/
 
