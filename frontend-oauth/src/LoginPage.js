@@ -12,7 +12,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:8080/auth/login", {
+      const res = await fetch("http://localhost:2026/auth/login", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
