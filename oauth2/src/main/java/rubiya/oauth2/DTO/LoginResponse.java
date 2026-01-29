@@ -11,16 +11,14 @@ public class LoginResponse {
     private String email;
     private String message;
     
-    private String accessToken;   // <-- add this
-  //  private String refreshToken;
+    private String accessToken;   
     
 	public LoginResponse(Long id2, String name2, String email2, String message2,String accessToken) {
 		this.id = id2;
 		this.name=name2;
 		this.email=email2;
 		this.message=message2;
-		//this.setAccessToken(accessToken);
-		//this.setRefreshToken(refreshToken);
+		
 	}
 	public Long getId() {
 		return id;
@@ -52,10 +50,5 @@ public class LoginResponse {
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	/*public String getRefreshToken() {
-		return refreshToken;
-	}
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
-	}*/
+	
 }

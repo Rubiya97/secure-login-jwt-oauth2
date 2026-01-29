@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch user profile from backend
   const fetchUser = async () => {
     try {
-      const res = await fetch("http://localhost:8080/user/profile", {
+      const res = await fetch("http://localhost:2026/user/profile", {
         credentials: "include",
       });
 
